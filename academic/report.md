@@ -1,5 +1,12 @@
 # Conceiving a rocket tracker
 
+- Abstract
+- Related Work
+- Methodology
+- Result
+- Discussion
+- Future work
+
 ## Goal
 
 The overall task aims to conceive a mechanism that can record the launch of a rocket from the ground station. It will be equipped with one or more cameras on a moving support controlled by a software. This project specifically designs the software. The program must implement an effecient real-time tracking algorithm to follow the rocket on the camera. It must also receives metrics from the rocket such as speed, altitude, etc. Using those information, the software moves the camera accordingly.
