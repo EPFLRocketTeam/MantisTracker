@@ -35,6 +35,9 @@ class OpenTracker:
       print("Tracker initialization failed.")
       return
 
+    # frame counter
+    count = 1
+
     while True:
       succ, frame = video.read()
 
@@ -54,7 +57,10 @@ class OpenTracker:
         print("Tracker update failed.")
         cv2.putText(frame, "Tracking failure detected", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
 
+      cv2.imwrite(f"tracking/result/{count}.jpg", frame)
       cv2.imshow("Tracking", frame)
+      count += 1
+      
       if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

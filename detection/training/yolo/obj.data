@@ -1,2 +1,2 @@
 classes = 1
-names = training/yolo/data/obj.names
+names = detection/training/yolo/data/obj.names
