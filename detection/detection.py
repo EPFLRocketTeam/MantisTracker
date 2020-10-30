@@ -10,7 +10,7 @@ class Detection:
     else:
       raise ValueError("This method is not implemented.") 
 
-  def detect(self, image, show = False):
+  def detect(self, image):
     """
     Given an image, detect the rocket on it
     image: an OpenCV image
@@ -18,19 +18,5 @@ class Detection:
     return 
     """
     detections, image = self.detector.detect(image)
-    if show:
-      cv2.imshow('Detection', image)
-      while True:
-        if cv2.waitKey() & 0xFF == ord('q'):
-          break
+    cv2.imwrite(f"detection/result/detection.jpg", image)
     return detections, image
-
-def main():
-  detector = Detection("Yolo")
-
-  image = cv2.imread("training/yolo/data/obj_test_data/ROCKET1.jpg")
-  detections, image = detector.detect(image, show=True)
-
-
-if __name__ == '__main__':
-  main()
