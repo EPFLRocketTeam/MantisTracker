@@ -5,7 +5,7 @@ class Detection:
 
   def __init__(self, method):
     if method == "Yolo":
-      training = "detection/training/yolo/training_1"
+      training = "detection/training/yolo/result"
       self.detector = Yolo(f"{training}/yolo-obj.cfg", "detection/training/yolo/obj.data", f"{training}/yolo-obj_best.weights")
     else:
       raise ValueError("This method is not implemented.") 
