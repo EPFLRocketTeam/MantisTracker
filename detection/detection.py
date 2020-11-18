@@ -13,7 +13,7 @@ class Detection:
     """
     if method == "Yolo":
       training = "detection/training/yolo/full"
-      self.detector = Yolo(f"{training}/yolo-obj.cfg", "detection/training/yolo/obj.data", f"{training}/old_yolo-obj_best.weights")
+      self.detector = Yolo(f"{training}/yolo-obj.cfg", "detection/training/yolo/obj.data", f"{training}/yolo-obj_best.weights")
     elif method == "tiny-Yolo":
       training = "detection/training/yolo/tiny"
       self.detector = Yolo(f"{training}/yolov4-tiny.cfg", "detection/training/yolo/obj.data", f"{training}/yolov4-tiny_best.weights")
