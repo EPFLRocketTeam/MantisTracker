@@ -1,0 +1,7 @@
+class_id = 0, name = rocket, ap = 78.95%         (TP = 109, FP = 26)
+
+for conf_thresh = 0.25, precision = 0.81, recall = 0.78, F1-score = 0.80
+for conf_thresh = 0.25, TP = 109, FP = 26, FN = 30, average IoU = 63.08 %
+
+IoU threshold = 50 %, used Area-Under-Curve for each unique Recall
+mean average precision (mAP@0.50) = 0.789507, or 78.95 %
