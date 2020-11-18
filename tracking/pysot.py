@@ -29,41 +29,26 @@ class Pysot:
     # create the tracker
     self.tracker = build_tracker(model)
 
-  def track(self, video, box):
+  def init(self, frame, box):
+    """
+    Initialize the tracker with a frame and the bounding box of the object
 
-    succ, frame = video.read()
+    frame (nparray): the first frame of the tracked video
 
-    if not succ:
-      print("Cannot read video frame.")
-      return
-
-    # if no box is provided, draw one
-    if box is None:
-      box = cv2.selectROI(frame, False)
-
+    return True (the initialization is always successful)
+    """
     self.tracker.init(frame, box)
+    return True
 
-    # frame counter
-    count = 1
+  def update(self, frame):
+    """
+    Predict the position of the object on the next frame
 
-    while True:
-      succ, frame = video.read()
+    frame (nparray): a frame of the tracked video
 
-      if not succ:
-        print("Cannot read video frame.")
-        break
-
-      outputs = self.tracker.track(frame)
-
-      box = list(map(int, outputs['bbox']))
-
-      cv2.rectangle(frame, (box[0], box[1]),
-                    (box[0] + box[2], box[1] + box[3]),
-                    (0, 255, 0), 3)
-      
-      cv2.imwrite(f"tracking/result/{count}.jpg", frame)
-      cv2.imshow("Tracking", frame)
-      count += 1
-
-      if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    return whether the update was successful, the predicted box
+    """
+    outputs = self.tracker.track(frame)
+    box = list(map(int, outputs['bbox']))
+    return len(box) > 0, box
+  

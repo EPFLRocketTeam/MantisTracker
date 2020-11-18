@@ -6,6 +6,10 @@ class Yolo:
   def __init__(self, config_path, data_path, weights_path):
     """
     Initialize a YOLO detection network 
+
+    config_path (string): path to the YOLO network config file
+    data_path (string): path the data file, which contains the name of the objects
+    weights_path (string): path to the trained weights
     """
     network, class_names, class_colors = darknet.load_network(config_path, data_path, weights_path)
     self.network = network
@@ -16,10 +20,11 @@ class Yolo:
 
   def detect(self, image):
     """
-    Given an image, detect the rocket on it
-    image: an OpenCV image
+    Detect a rocket on a given image
 
-    return detections, image: the sorted list of detected boxes, the image with the boxes
+    image (nparray): an OpenCV image
+
+    return the sorted array of detected objects, the image with a box around the detected objects
     """
     # Creates an image compatible with the Darknet
     darknet_image = darknet.make_image(self.width, self.height, 3)
@@ -47,8 +52,6 @@ class Yolo:
     image = darknet.draw_boxes(detections, image_resized, self.class_colors)
     # convert the image to RGB
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-    print(detections)
 
     # Free (C implementation)
     darknet.free_image(darknet_image)

@@ -4,18 +4,29 @@ from detection.yolo import Yolo
 class Detection:
 
   def __init__(self, method):
+    """
+    Construct a detector
+
+    method (string): the name of the detection method
+
+    ValueError if the method does not exist
+    """
     if method == "Yolo":
-      training = "detection/training/yolo/result"
-      self.detector = Yolo(f"{training}/yolo-obj.cfg", "detection/training/yolo/obj.data", f"{training}/yolo-obj_best.weights")
+      training = "detection/training/yolo/full"
+      self.detector = Yolo(f"{training}/yolo-obj.cfg", "detection/training/yolo/obj.data", f"{training}/old_yolo-obj_best.weights")
+    elif method == "tiny-Yolo":
+      training = "detection/training/yolo/tiny"
+      self.detector = Yolo(f"{training}/yolov4-tiny.cfg", "detection/training/yolo/obj.data", f"{training}/yolov4-tiny_best.weights")
     else:
       raise ValueError("This method is not implemented.") 
 
   def detect(self, image):
     """
-    Given an image, detect the rocket on it
-    image: an OpenCV image
+    Detect a rocket on a given image
 
-    return 
+    image (nparray): an OpenCV image
+
+    return the sorted array of detected objects, the image with a box around the detected objects
     """
     detections, image = self.detector.detect(image)
     cv2.imwrite(f"detection/result/detection.jpg", image)
