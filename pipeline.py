@@ -102,7 +102,7 @@ class Pipeline:
     detector = Detection(method)
 
     # The window used to display the result
-    if not benchmark: window()
+    if not benchmark: Pipeline.window()
 
     # open the images
     images = map(lambda path: cv2.imread(path), images_path)
