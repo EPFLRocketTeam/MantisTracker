@@ -1,6 +1,6 @@
 import cv2
 from tracking.open_tracker import OpenTracker
-from tracking.pysot import Pysot
+#from tracking.pysot import Pysot
 
 class Tracking:
 
