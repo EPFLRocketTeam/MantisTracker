@@ -6,7 +6,20 @@ The tracker detects the rocket on a camera feed and adjust its movement mechanis
 
 ## Requirement
 
-TODO
+Install the following packages in order to run the tracker:
+
+For all methods:
+- `OpenCV`
+
+For YOLO (and tiny YOLO):
+- 
+
+For SiamRPN:
+- 
+
+Here are the steps to install the requirements using `conda`:
+
+`conda create -n mantistracker -c anaconda opencv`
 
 ## Usage
 

@@ -108,7 +108,7 @@ class Pipeline:
     images = map(lambda path: cv2.imread(path), images_path)
     
     # measure the time elapsed
-    t0 = time.time()
+    times = []
     # number of detections
     detected = 0
 
@@ -117,7 +117,9 @@ class Pipeline:
       if image is None:
         sys.exit("The image could not be found !")
 
+      t0 = time.time()
       detections, image = detector.detect(image)
+      times.append(time.time() - t0)
 
       if detections:
         detected += 1
@@ -128,11 +130,13 @@ class Pipeline:
           if cv2.waitKey() & 0xFF == ord('q'):
             break
 
-    t1 = time.time() - t0
     if benchmark:
-      print("Time elapsed: {:.2f}s".format(t1))
-      print("{:d} detections for {:d} images, {:.2f}% accuracy.".format(detected, len(images_path), detected/len(images_path)*100))
-      print("Performance: {:.2f} fps".format(len(images_path)/t1))
+      total = sum(times)
+      maximum = max(times)
+      size = len(images_path)
+      print("Time elapsed: {:.2f}s / Average: {:.2f}ms / Max: {:.2f}ms".format(total, total*1000/size, maximum*1000))
+      print("{:d} detections for {:d} images, {:.2f}% accuracy.".format(detected, size, detected/size*100))
+      print("Performance: {:.2f} fps".format(size / total))
 
 
 if __name__ == '__main__':
