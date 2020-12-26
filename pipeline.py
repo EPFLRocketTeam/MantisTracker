@@ -24,6 +24,7 @@ class Pipeline:
     return
     """
     video = cv2.VideoCapture(video_source)
+    # video = cv2.VideoCapture('filesrc location={} ! qtdemux ! queue ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw,format=BGRx ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink'.format(video_source), cv2.CAP_GSTREAMER)
     detector = Detection(detection_method)
     tracker = Tracking(tracking_method)
 
@@ -154,7 +155,7 @@ if __name__ == '__main__':
 
   tracker = subparser.add_parser('track', help='Track a rocket on an video feed.')
   tracker.add_argument('--video', dest='video_source', required=True, help='The path to the video source')
-  tracker.add_argument('--method', dest='method', choices=['OpenTracker', 'SiamRPN'], default='OpenTracker',
+  tracker.add_argument('--method', dest='method', choices=['OpenTracker', 'SiamRPN', 'SiamRPN-onnx'], default='OpenTracker',
                       help='The tracking method to use')
   tracker.add_argument('--detection', dest='detection', choices=['Yolo', 'tiny-Yolo'], default='Yolo',
                       help='The detection method to use')
@@ -165,5 +166,3 @@ if __name__ == '__main__':
     Pipeline.track(args.video_source, args.method, args.detection, args.benchmark)
   elif args.action == "detect":
     Pipeline.detect(args.images_path, args.method, args.benchmark)
-
-  cv2.destroyAllWindows()

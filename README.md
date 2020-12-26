@@ -10,12 +10,14 @@ Install the following packages in order to run the tracker:
 
 For all methods:
 - `OpenCV`
+- `numpy`
 
 For YOLO (and tiny YOLO):
 - 
 
 For SiamRPN:
-- 
+
+Please follow this link to install the requirements: [Pysot installation](https://github.com/STVIR/pysot/blob/master/INSTALL.md)
 
 Here are the steps to install the requirements using `conda`:
 
@@ -37,3 +39,9 @@ Here are the steps to install the requirements using `conda`:
   - `--video`: the video feed. Can be a path to a video or TODO
   - `--method`: specify the method of tracking (default: OpenTracker). The options are [OpenTracker, SiamRPN].
   - `--detection`: specify the method of detection (default: Yolo). The options are [Yolo, tiny-Yolo].
+
+  ## Installation on Nvidia Jetson Nano
+
+  - `OpenCV`: `python3 -m pip install opencv-contrib-python`
+  - `Pytorch`: https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048
+  
