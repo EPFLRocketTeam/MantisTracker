@@ -1,9 +1,4 @@
 
-import sys
-import os
-# Path to the Pysot library
-sys.path.append(os.path.abspath("tracking/library/"))
-
 from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
 

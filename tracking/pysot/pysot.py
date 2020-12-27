@@ -1,17 +1,8 @@
 import cv2
 import torch
-import numpy as np
-
-import os
-import sys
-# Path to the Pysot library
-sys.path.append(os.path.abspath("tracking/library/"))
 
 from pysot.core.config import cfg
-from pysot.models.model_builder import ModelBuilder
 from pysot.tracker.tracker_builder import build_tracker
-
-from tracking.pysot.model_builder_onnx import ModelBuilderOnnx
 
 class Pysot:
 
@@ -23,8 +14,10 @@ class Pysot:
     device = torch.device('cuda' if cfg.CUDA else 'cpu')
 
     if onnx:
+      from tracking.pysot.model_builder_onnx import ModelBuilderOnnx
       model = ModelBuilderOnnx()
     else:
+      from pysot.models.model_builder import ModelBuilder
       # load the trained model
       model = ModelBuilder()
       model.load_state_dict(torch.load("tracking/training/pysot/siamrpn_alex_dwxcorr/model.pth", map_location=lambda storage, loc: storage.cpu()))

@@ -1,6 +1,3 @@
-import cv2
-from tracking.open_tracker import OpenTracker
-from tracking.pysot.pysot import Pysot
 
 class Tracking:
 
@@ -11,10 +8,13 @@ class Tracking:
     method (string):  the name of the tracking method
     """
     if method == "OpenTracker":
+      from tracking.open_tracker import OpenTracker
       self.tracker = OpenTracker();
     elif method == "SiamRPN":
+      from tracking.pysot.pysot import Pysot
       self.tracker = Pysot()
     elif method == "SiamRPN-onnx":
+      from tracking.pysot.pysot import Pysot
       self.tracker = Pysot(onnx=True)
     else:
       raise ValueError("This method is not implemented.")
