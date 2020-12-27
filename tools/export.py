@@ -20,14 +20,14 @@ from pysot.tracker.tracker_builder import build_tracker
 #
 
 # config for the tracker
-cfg.merge_from_file("experiments/siamrpn_alex_dwxcorr/config.yaml")
+cfg.merge_from_file("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml")
 
 map_location = lambda storage, loc: storage
 
 model = ModelBuilder()
 
 # load the trained model
-model.load_state_dict(torch.load("experiments/siamrpn_alex_dwxcorr/model.pth", map_location=map_location))
+model.load_state_dict(torch.load("tracking/training/pysot/siamrpn_alex_dwxcorr/model.pth", map_location=map_location))
 model.eval()
 
 # Size params
