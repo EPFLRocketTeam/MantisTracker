@@ -1,10 +1,7 @@
 
-import torch
+import argparse
 import cv2
 import numpy as np
-
-import onnx
-import onnxruntime
 
 import os
 import sys
@@ -15,41 +12,81 @@ from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
 from pysot.tracker.tracker_builder import build_tracker
 
-#
-# Load the PyTorch Model
-#
+class Export:
 
-# config for the tracker
-cfg.merge_from_file("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml")
+  OUTPUT_PATH = "tracking/training/export/"
+    
+  @staticmethod
+  def to_onnx(config_path, model_path):
+    """
+    Export a Siam* network to an ONNX model
 
-map_location = lambda storage, loc: storage
+    config_path (string): path the pysot config (.yml)
+    model_path (string): path to the pysot model (.pth)
+    """
 
-model = ModelBuilder()
+    import onnx
+    import torch
 
-# load the trained model
-model.load_state_dict(torch.load("tracking/training/pysot/siamrpn_alex_dwxcorr/model.pth", map_location=map_location))
-model.eval()
+    # Load the PyTorch Model
 
-# Size params
-# width = 127 # random number
-z = (1, 3, 127, 127)
-x = (1, 3, 287, 287)
-zf = (1, 256, 6, 6)
-xf = (1, 256, 26, 26)
+    # config for the tracker
+    cfg.merge_from_file(config_path)
 
-path = "tracking/training/onnx/"
+    model = ModelBuilder()
 
-#
-# Trace the models
-#
+    # load the trained model
+    map_location = lambda storage, loc: storage
+    model.load_state_dict(torch.load(model_path, map_location=map_location))
+    model.eval()
 
-def trace_and_test(name, model, *input, dynamic_axes={}):
+    # Size params
+    # width = 127 # random number
+    z = (1, 3, cfg.TRACK.EXEMPLAR_SIZE, cfg.TRACK.EXEMPLAR_SIZE)
+    x = (1, 3, cfg.TRACK.INSTANCE_SIZE, cfg.TRACK.INSTANCE_SIZE)
+    zf = (1, 256, 6, 6)
+    xf = (1, 256, 26, 26)
+
+    # Trace the models
+
+    # Backbone
+    x = torch.rand(x, requires_grad=True, dtype=torch.float32)
+    z = torch.rand(z, requires_grad=True, dtype=torch.float32)
+    # trace_and_test("backbone", model.backbone, x, dynamic_axes={'input' : {2 : 'width', 3 : 'width'}})
+    Export.trace_and_test("backbone", model.backbone, x)
+    Export.trace_and_test("template", model.backbone, z)
+
+    # RPN head
+    x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
+    y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
+    Export.trace_and_test("rpn_head", model.rpn_head, x, y)
+
+    # Neck
+    if cfg.ADJUST.ADJUST:
+      x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
+      Export.trace_and_test("neck", model.neck, x)
+
+    # Mask head
+    if cfg.MASK.MASK:
+      x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
+      y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
+      Export.trace_and_test("mask_head", model.mask_head, x, y)
+
+  @staticmethod
+  def trace_and_test(name, model, *input, dynamic_axes={}):
+    """
+    Export a Pytorch model to an ONNX model
+    """
+
+    import onnx
+    import onnxruntime
+    import torch
 
     # utility function for comparing onnx runtime and model output
     def to_numpy(tensor):
         return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
-    filename = path + name + ".onnx"
+    filename = Export.OUTPUT_PATH + "onnx/" + name + ".onnx"
     torch.onnx.export(model, input, filename, input_names = ['input'], dynamic_axes=dynamic_axes)
 
     # compute the output of the model
@@ -71,27 +108,69 @@ def trace_and_test(name, model, *input, dynamic_axes={}):
     for i, output in enumerate(outputs):
         np.testing.assert_allclose(to_numpy(output), ort_outs[i], rtol=1e-03, atol=1e-05)
 
-    print("Exported model produced correct results.")
+    print("Exported model " + name + " produced correct results.")
 
-# Backbone
-x = torch.rand(x, requires_grad=True, dtype=torch.float32)
-z = torch.rand(z, requires_grad=True, dtype=torch.float32)
-# trace_and_test("backbone", model.backbone, x, dynamic_axes={'input' : {2 : 'width', 3 : 'width'}})
-trace_and_test("backbone", model.backbone, x)
-trace_and_test("template", model.backbone, z)
+  @staticmethod
+  def to_tensorrt(config_path):
+    """
+    Export the Siam* network ONNX models to TensorRT
 
-# Neck
-if cfg.ADJUST.ADJUST:
-    x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
-    trace_and_test("neck", model.neck, x)
+    config_path (string): path the pysot config (.yml)
+    """
 
-# RPN head
-x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
-y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
-trace_and_test("rpn_head", model.rpn_head, x, y)
+    cfg.merge_from_file(config_path)
 
-# Mask head
-if cfg.MASK.MASK:
-    x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
-    y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
-    trace_and_test("mask_head", model.mask_head, x, y)
+    models = ["backbone", "template", "rpn_head"]
+    if cfg.ADJUST.ADJUST: models.append("neck")
+    if cfg.MASK.MASK: models.append("mask_head")
+
+    for model in models:
+      Export.parse_and_serialize(model)
+
+  @staticmethod
+  def parse_and_serialize(name):
+    """
+    Export a ONNX model to TensorRT
+    """
+    import tensorrt as trt
+
+    # Logger
+    TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+    # Flag for the network
+    EXPLICIT_BATCH = 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
+
+    # TensorRT primitives
+    builder = trt.Builder(TRT_LOGGER)
+    network = builder.create_network(EXPLICIT_BATCH)
+    # Parser of the model
+    parser = trt.OnnxParser(network, TRT_LOGGER)
+
+    with open(Export.OUTPUT_PATH + "onnx/" + name + ".onnx", 'rb') as model:
+      succ = parser.parse(model.read()) 
+      if not succ:
+        for error in range(parser.num_errors):
+          print(parser.get_error(error))
+
+    config = builder.create_builder_config()
+    engine = builder.build_engine(network, config)
+
+    with open(Export.OUTPUT_PATH + "tensorrt/" + name + ".engine", 'wb') as f:
+      f.write(engine.serialize())
+    
+    print("ONNX model " + name + " exported to TensorRT")
+
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(description='Export tool')
+  subparser = parser.add_subparsers(dest='action')
+
+  onnx_parser = subparser.add_parser('onnx', help='Export to ONNX format')
+
+  tensorrt_parser = subparser.add_parser('tensorrt', help='Export to TensorRT. ONNX models must already exists !')
+
+  args = parser.parse_args()
+
+  if args.action == "onnx":
+    Export.to_onnx("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml", "tracking/training/pysot/siamrpn_alex_dwxcorr/model.pth")
+  elif args.action == "tensorrt":
+    Export.to_tensorrt("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml")
