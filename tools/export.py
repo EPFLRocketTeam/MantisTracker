@@ -87,7 +87,7 @@ class Export:
         return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
     filename = Export.OUTPUT_PATH + "onnx/" + name + ".onnx"
-    torch.onnx.export(model, input, filename, input_names = ['input'], dynamic_axes=dynamic_axes)
+    torch.onnx.export(model, input, filename, input_names = ['input'], dynamic_axes=dynamic_axes, opset_version=11)
 
     # compute the output of the model
     outputs = model(*input)
