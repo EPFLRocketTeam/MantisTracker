@@ -5,24 +5,30 @@ from pysot.models.model_builder import ModelBuilder
 from tracking.pysot.onnx_adapter import OnnxAdapter
 
 class ModelBuilderOnnx(ModelBuilder):
+  PATH = "tracking/training/onnx/"
+
   def __init__(self):
     super(ModelBuilder, self).__init__()
 
-    path = "tracking/training/onnx/"
-
     # build backbone
-    self.backbone = OnnxAdapter(path + "backbone.onnx")
+    # the template method (which initialize the tracking) has different input dimensions
+    self.backbone = OnnxAdapter(self.PATH + "template.onnx")
 
     # build adjust layer
     if cfg.ADJUST.ADJUST:
-        self.neck = OnnxAdapter(path + "neck.onnx")
+        self.neck = OnnxAdapter(self.PATH + "neck.onnx")
 
     # build rpn head
-    self.rpn_head = OnnxAdapter(path + "rpn_head.onnx")
+    self.rpn_head = OnnxAdapter(self.PATH + "rpn_head.onnx")
 
     # build mask head
     if cfg.MASK.MASK:
-        self.mask_head = OnnxAdapter(path + "mask_head.onnx")
+        self.mask_head = OnnxAdapter(self.PATH + "mask_head.onnx")
 
         if cfg.REFINE.REFINE:
-            self.refine_head = OnnxAdapter(path + "refine_head.onnx")
+            self.refine_head = OnnxAdapter(self.PATH + "refine_head.onnx")
+
+  def template(self, z):
+    super().template(z)
+    # Change the backbone because initialization and tracking have differnt input dimensions
+    self.backbone = OnnxAdapter(self.PATH + "backbone.onnx")

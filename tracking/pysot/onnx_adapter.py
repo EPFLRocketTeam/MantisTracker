@@ -1,4 +1,3 @@
-import onnx
 import onnxruntime
 import torch
 

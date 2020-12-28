@@ -31,8 +31,9 @@ model.load_state_dict(torch.load("tracking/training/pysot/siamrpn_alex_dwxcorr/m
 model.eval()
 
 # Size params
-width = 127 # random number
-xz = (1, 3, width, width)
+# width = 127 # random number
+z = (1, 3, 127, 127)
+x = (1, 3, 287, 287)
 zf = (1, 256, 6, 6)
 xf = (1, 256, 26, 26)
 
@@ -73,21 +74,24 @@ def trace_and_test(name, model, *input, dynamic_axes={}):
     print("Exported model produced correct results.")
 
 # Backbone
-x = torch.rand(xz, requires_grad=True)
-trace_and_test("backbone", model.backbone, x, dynamic_axes={'input' : {2 : 'width', 3 : 'width'}})
+x = torch.rand(x, requires_grad=True, dtype=torch.float32)
+z = torch.rand(z, requires_grad=True, dtype=torch.float32)
+# trace_and_test("backbone", model.backbone, x, dynamic_axes={'input' : {2 : 'width', 3 : 'width'}})
+trace_and_test("backbone", model.backbone, x)
+trace_and_test("template", model.backbone, z)
 
 # Neck
 if cfg.ADJUST.ADJUST:
-    x = torch.rand(zf, requires_grad=True)
+    x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
     trace_and_test("neck", model.neck, x)
 
 # RPN head
-x = torch.rand(zf, requires_grad=True)
-y = torch.rand(xf, requires_grad=True)
+x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
+y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
 trace_and_test("rpn_head", model.rpn_head, x, y)
 
 # Mask head
 if cfg.MASK.MASK:
-    x = torch.rand(zf, requires_grad=True)
-    y = torch.rand(xf, requires_grad=True)
+    x = torch.rand(zf, requires_grad=True, dtype=torch.float32)
+    y = torch.rand(xf, requires_grad=True, dtype=torch.float32)
     trace_and_test("mask_head", model.mask_head, x, y)
