@@ -44,4 +44,5 @@ Here are the steps to install the requirements using `conda`:
 
   - `OpenCV`: `python3 -m pip install opencv-contrib-python`
   - `Pytorch`: https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048
+  - `ONNX runtime`: https://developer.nvidia.com/blog/announcing-onnx-runtime-for-jetson/
   
