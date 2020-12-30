@@ -138,24 +138,19 @@ class Export:
     TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
     # Flag for the network
     EXPLICIT_BATCH = 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
-
-    # TensorRT primitives
-    builder = trt.Builder(TRT_LOGGER)
-    network = builder.create_network(EXPLICIT_BATCH)
-    # Parser of the model
-    parser = trt.OnnxParser(network, TRT_LOGGER)
-
-    with open(Export.OUTPUT_PATH + "onnx/" + name + ".onnx", 'rb') as model:
-      succ = parser.parse(model.read()) 
-      if not succ:
-        for error in range(parser.num_errors):
-          print(parser.get_error(error))
-
-    config = builder.create_builder_config()
-    engine = builder.build_engine(network, config)
-
-    with open(Export.OUTPUT_PATH + "tensorrt/" + name + ".engine", 'wb') as f:
-      f.write(engine.serialize())
+ 
+    with trt.Builder(TRT_LOGGER) as builder, builder.create_network(EXPLICIT_BATCH) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
+      with open(Export.OUTPUT_PATH + "onnx/" + name + ".onnx", 'rb') as model:
+        succ = parser.parse(model.read()) 
+        if not succ:
+          for error in range(parser.num_errors):
+            print(parser.get_error(error))
+      
+      with builder.create_builder_config() as config:
+        config.max_workspace_size = 1 << 20
+        with builder.build_engine(network, config) as engine:
+          with open(Export.OUTPUT_PATH + "tensorrt/" + name + ".engine", 'wb') as f:
+            f.write(engine.serialize())
     
     print("ONNX model " + name + " exported to TensorRT")
 
