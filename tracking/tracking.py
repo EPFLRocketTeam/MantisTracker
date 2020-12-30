@@ -15,7 +15,10 @@ class Tracking:
       self.tracker = Pysot()
     elif method == "SiamRPN-onnx":
       from tracking.pysot.pysot import Pysot
-      self.tracker = Pysot(onnx=True)
+      self.tracker = Pysot(optimization="onnx")
+    elif method == "SiamRPN-tensorrt":
+      from tracking.pysot.pysot import Pysot
+      self.tracker = Pysot(optimization="tensorrt")
     else:
       raise ValueError("This method is not implemented.")
 

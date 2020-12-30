@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
   tracker = subparser.add_parser('track', help='Track a rocket on an video feed.')
   tracker.add_argument('--video', dest='video_source', required=True, help='The path to the video source')
-  tracker.add_argument('--method', dest='method', choices=['OpenTracker', 'SiamRPN', 'SiamRPN-onnx'], default='OpenTracker',
+  tracker.add_argument('--method', dest='method', choices=['OpenTracker', 'SiamRPN', 'SiamRPN-onnx', 'SiamRPN-tensorrt'], default='OpenTracker',
                       help='The tracking method to use')
   tracker.add_argument('--detection', dest='detection', choices=['Yolo', 'tiny-Yolo'], default='Yolo',
                       help='The detection method to use')
