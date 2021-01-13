@@ -2,11 +2,16 @@ import cv2
 
 class OpenTracker:
 
-  def __init__(self):
+  def __init__(self, method):
     """
     Initialize an OpenCV tracker
     """
-    self.tracker = cv2.TrackerKCF_create()
+    if method == "KCF":
+      self.tracker = cv2.TrackerKCF_create()
+    elif method == "MOSSE":
+      self.tracker = cv2.TrackerMOSSE_create()
+    else:
+      raise ValueError("This method is not implemented.") 
 
   def init(self, frame, box):
     """

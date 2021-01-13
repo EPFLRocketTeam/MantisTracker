@@ -7,9 +7,12 @@ class Tracking:
 
     method (string):  the name of the tracking method
     """
-    if method == "OpenTracker":
+    if method == "KCF":
       from tracking.open_tracker import OpenTracker
-      self.tracker = OpenTracker();
+      self.tracker = OpenTracker("KCF");
+    elif method == "MOSSE":
+      from tracking.open_tracker import OpenTracker
+      self.tracker = OpenTracker("MOSSE");
     elif method == "SiamRPN":
       from tracking.pysot.pysot import Pysot
       self.tracker = Pysot()
