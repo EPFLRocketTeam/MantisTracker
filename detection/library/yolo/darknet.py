@@ -16,6 +16,7 @@ from ctypes import *
 import math
 import random
 import os
+import yaml
 
 
 class BOX(Structure):
@@ -172,9 +173,14 @@ def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45
     free_detections(detections, num)
     return sorted(predictions, key=lambda x: x[1])
 
+file = open("config.yaml")
+config = yaml.load(file, Loader=yaml.FullLoader)
+plateform = config['yolo']['platform']
+hardware = config['yolo']['hardware']
+file.close()
 
-hasGPU = False
-lib = CDLL(os.path.abspath("detection/library/yolo/libdarknet_MAC.so"), RTLD_GLOBAL)
+hasGPU = (hardware == 'GPU')
+lib = CDLL(os.path.abspath(f"detection/library/yolo/libdarknet_{plateform}_{hardware}.so"), RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]

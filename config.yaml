@@ -1,0 +1,6 @@
+# YOLO/tinyYOLO detection
+yolo:
+  # Choose between MAC, LINUX, ARM
+  platform: 'MAC' 
+  # Choose between CPU and GPU
+  hardware: 'CPU'
