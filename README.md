@@ -9,11 +9,12 @@ The tracker detects the rocket on a camera feed and adjust its movement mechanis
 Install the following packages in order to run the tracker:
 
 For all methods:
-- `OpenCV`
-- `numpy`
+- `OpenCV`: `pip install opencv-contrib-python`
+- `numpy`: `pip insall numpy`
+- `yaml`: `pip install pyyaml`
 
-For YOLO (and tiny YOLO):
-- 
+If you have a GPU with CUDA:
+-
 
 For SiamRPN:
 
@@ -37,12 +38,12 @@ Here are the steps to install the requirements using `conda`:
 - `track`: track a rocket on a provided video feed.
 
   - `--video`: the video feed. Can be a path to a video or TODO
-  - `--method`: specify the method of tracking (default: OpenTracker). The options are [OpenTracker, SiamRPN].
+  - `--method`: specify the method of tracking (default: OpenTracker). The options are [MOSSE; KCF, SiamRPN].
   - `--detection`: specify the method of detection (default: Yolo). The options are [Yolo, tiny-Yolo].
 
   ## Installation on Nvidia Jetson Nano
 
-  - `OpenCV`: `python3 -m pip install opencv-contrib-python`
+  - `OpenCV`, `numpy`, `pyyaml` using pip
   - `Pytorch`: https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048
   - `ONNX runtime`: https://developer.nvidia.com/blog/announcing-onnx-runtime-for-jetson/
   
