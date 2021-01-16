@@ -3,6 +3,8 @@
 # python cache
 __pycache__/
 
-
 # ignore weights file which are too large
 *.weights
+
+outputs/tracking/*.jpg
+outputs/detection/*.jpg

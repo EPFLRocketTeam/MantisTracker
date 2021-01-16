@@ -4,3 +4,11 @@ yolo:
   platform: 'MAC' 
   # Choose between CPU and GPU
   hardware: 'CPU'
+
+  # Path to the YOLO weights
+  full:
+    weights: 'training/detection/yolo/full/yolo_2.weights'
+  
+    # Path to the tiny YOLO weights
+  tiny:
+    weights: 'training/detection/yolo/tiny/tiny_yolo_2.weights'

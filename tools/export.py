@@ -6,7 +6,7 @@ import numpy as np
 import os
 import sys
 # Path to the Pysot library
-sys.path.append(os.path.abspath("tracking/library/"))
+sys.path.append(os.path.abspath("libraries"))
 
 from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
@@ -14,7 +14,7 @@ from pysot.tracker.tracker_builder import build_tracker
 
 class Export:
 
-  OUTPUT_PATH = "tracking/training/export/"
+  OUTPUT_PATH = "training/tracking/export/"
     
   @staticmethod
   def to_onnx(config_path, model_path):
@@ -166,6 +166,6 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   if args.action == "onnx":
-    Export.to_onnx("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml", "tracking/training/pysot/siamrpn_alex_dwxcorr/model.pth")
+    Export.to_onnx("training/tracking/pysot/siamrpn_alex_dwxcorr/config.yaml", "training/tracking/pysot/siamrpn_alex_dwxcorr/model.pth")
   elif args.action == "tensorrt":
-    Export.to_tensorrt("tracking/training/pysot/siamrpn_alex_dwxcorr/config.yaml")
+    Export.to_tensorrt("training/tracking/pysot/siamrpn_alex_dwxcorr/config.yaml")

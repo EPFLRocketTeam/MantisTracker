@@ -1,8 +1,0 @@
-class_id = 0, name = rocket, ap = 93.98%         (TP = 129, FP = 10)
-
-for conf_thresh = 0.25, precision = 0.93, recall = 0.93, F1-score = 0.93
-for conf_thresh = 0.25, TP = 129, FP = 10, FN = 10, average IoU = 73.51 %
-
-IoU threshold = 50 %, used Area-Under-Curve for each unique Recall
-mean average precision (mAP@0.50) = 0.939762, or 93.98 %
-Total Detection Time: 33 Seconds
