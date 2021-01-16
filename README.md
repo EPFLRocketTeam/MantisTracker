@@ -57,6 +57,10 @@ For configuring SiamRPN, the config files are in `training/tracking/pysot/`. You
   - `--method`: specify the method of tracking (default: OpenTracker). The options are [MOSSE, KCF, SiamRPN, SiamRPN-onnx].
   - `--detection`: specify the method of detection (default: Yolo). The options are [Yolo, tiny-Yolo].
 
+Examples:
+- `python3 tools/pipeline.py detect --images training/detection/dataset/test/*.jpg --method tiny-Yolo`
+- `python3 tools/pipeline.py --benchmark track --video training/tracking/dataset/test/test2.mp4 --method SiamRPN`
+
 The generated images of the detection or the tracking can be found in the folder `/outputs`.
 
 ### Export
