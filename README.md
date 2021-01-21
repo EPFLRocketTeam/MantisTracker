@@ -53,7 +53,7 @@ For configuring SiamRPN, the config files are in `training/tracking/pysot/`. You
 
 - `track`: track a rocket on a provided video feed.
 
-  - `--video`: the video feed. Can be a path to a video or TODO
+  - `--video`: the video feed. Can be a path to a video
   - `--method`: specify the method of tracking (default: OpenTracker). The options are [MOSSE, KCF, SiamRPN, SiamRPN-onnx].
   - `--detection`: specify the method of detection (default: Yolo). The options are [Yolo, tiny-Yolo].
 
